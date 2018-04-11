@@ -35,7 +35,14 @@ run_phantomjs <- function(debugLevel = c("INFO", "ERROR", "WARN", "DEBUG"),
     sprintf("--webdriver=%s:%d", host, port),
     sprintf("--webdriver-loglevel=%s", debugLevel)
   )
-  ph <- process$new(command = phexe, args = args, supervise = TRUE)
+
+  # The env vars are a workaround for :
+  # https://github.com/rstudio/shinytest/issues/165#issuecomment-364935112
+  withr::with_envvar(get_phantom_envvars(), {
+    ph <- process$new(command = phexe, args = args, supervise = TRUE,
+                      stdout = tempfile("webdriver-stdout-", fileext = ".log"),
+                      stderr = tempfile("webdriver-stderr-", fileext = ".log"))
+  })
 
   if (! ph$is_alive()) {
     stop(
@@ -56,3 +63,34 @@ run_phantomjs <- function(debugLevel = c("INFO", "ERROR", "WARN", "DEBUG"),
 
   list(process = ph, port = port)
 }
+
+
+# Needed for a weird issue in Debian build of phantomjs:
+# https://github.com/rstudio/shinytest/issues/165#issuecomment-364935112
+get_phantom_envvars <- local({
+  # memoize
+  vars <- NULL
+
+  function() {
+    if (!is.null(vars)) return(vars)
+
+    vars <<- list()
+
+    phexe <- find_phantom()
+    if (is.null(phexe)) stop("No phantom.js, exiting.")
+
+    ph <- process$new(command = phexe, args = "--version", stdout = "|", stderr = "|")
+    ph$wait(5000)
+    if (ph$is_alive()) {
+      ph$kill()
+      stop("`phantomjs --version` timed out.")
+    }
+    if (ph$get_exit_status() != 0 &&
+        any(grepl("^QXcbConnection: Could not connect to display", ph$read_error_lines())))
+    {
+      vars$QT_QPA_PLATFORM <<- "offscreen"
+    }
+
+    vars
+  }
+})
