@@ -1,21 +1,17 @@
 
-```{r, setup, echo = FALSE, message = FALSE}
-knitr::opts_chunk$set(
-  tidy = FALSE,
-  fig.width = 4,
-  fig.height = 12,
-  fig.path = "inst/")
-```
+
 
 # webdriver
 
 > 'WebDriver' Client for 'PhantomJS'
 
-[![Linux Build Status](https://travis-ci.org/rstudio/webdriver.svg?branch=master)](https://travis-ci.org/rstudio/webdriver)
-[![Windows Build status](https://ci.appveyor.com/api/projects/status/github/rstudio/webdriver?svg=true)](https://ci.appveyor.com/project/rstudio/webdriver)
-[![](http://www.r-pkg.org/badges/version/webdriver)](http://www.r-pkg.org/pkg/webdriver)
-[![CRAN RStudio mirror downloads](http://cranlogs.r-pkg.org/badges/webdriver)](http://www.r-pkg.org/pkg/webdriver)
-[![Coverage Status](https://img.shields.io/codecov/c/github/rstudio/webdriver/master.svg)](https://codecov.io/github/rstudio/webdriver?branch=master)
+  <!-- badges: start -->
+  [![R-CMD-check](https://github.com/rstudio/webdriver/workflows/R-CMD-check/badge.svg)](https://github.com/rstudio/webdriver/actions)
+  [![](https://www.r-pkg.org/badges/version/webdriver)](https://www.r-pkg.org/pkg/webdriver)
+  [![CRAN RStudio mirror downloads](https://cranlogs.r-pkg.org/badges/webdriver)](https://www.r-pkg.org/pkg/webdriver)
+  [![Coverage Status](https://img.shields.io/codecov/c/github/rstudio/webdriver/master.svg)](https://codecov.io/github/rstudio/webdriver?branch=master)
+  <!-- badges: end -->
+
 
 
 A client for the 'WebDriver' 'API'. It allows driving a (probably headless)
@@ -26,12 +22,13 @@ tested with 'PhantomJS'.
 ## Installation
 
 ```r
-source("https://install-github.me/rstudio/webdriver")
+install.packages("webdriver")
 ```
 
 ## Usage
 
-```{r}
+
+```r
 library(webdriver)
 ```
 
@@ -46,9 +43,18 @@ The `run_phantomjs()` function starts PhantomJS, and waits until it is ready
 to serve queries. It returns a process object that you can terminate
 manually, and the port on which PhantomJS is listening.
 
-```{r}
+
+```r
 pjs <- run_phantomjs()
 pjs
+```
+
+```
+## $process
+## PROCESS 'phantomjs', running, pid 45932.
+## 
+## $port
+## [1] 5793
 ```
 
 ### Sessions
@@ -57,26 +63,42 @@ Use the `Session` class to connection to a running PhantomJS process.
 One process can save multiple sessions, and the sessions are independent
 of each other.
 
-```{r}
+
+```r
 ses <- Session$new(port = pjs$port)
 ```
 
 Once a session is established, you can manipulate the headless web browser
 through it:
 
-```{r}
+
+```r
 ses$go("https://r-pkg.org/pkg/callr")
 ses$getUrl()
+```
+
+```
+## [1] "https://r-pkg.org/pkg/callr"
+```
+
+```r
 ses$getTitle()
+```
+
+```
+## [1] "callr @ METACRAN"
 ```
 
 You can also take a screenshot of the whole web page, and show it on R's
 graphics device, or save it to a PNG file:
 
 
-```{r screenshot-1}
+
+```r
 ses$takeScreenshot()
 ```
+
+![plot of chunk screenshot-1](inst/screenshot-1-1.png)
 
 ### HTML elements
 
@@ -85,10 +107,22 @@ web page, which can then be further manipulated: `findElement()` and
 `findElements()`. They work with CSS or XPATH selectors, and also with
 (possibly partial) HTML text.
 
-```{r}
+
+```r
 install <- ses$findElement(".install-package")
 install$getName()
+```
+
+```
+## [1] "div"
+```
+
+```r
 install$getText()
+```
+
+```
+## [1] "install.packages(\"callr\")"
 ```
 
 If you have an HTML element that can receive keyboard keys, you can use
@@ -96,13 +130,30 @@ the `sendKeys()` method to send them. The `key` list helps with sending
 special, characters, e.g. `key$enter` corresponds to pressing ENTER. For
 example we can type into a search box:
 
-```{r screenshot-2}
+
+```r
 search <- ses$findElement("#cran-input")
 search$sendKeys("html", key$enter)
 ses$getUrl()
+```
+
+```
+## [1] "https://r-pkg.org/search.html?q=html"
+```
+
+```r
 ses$getTitle()
+```
+
+```
+## [1] "METACRAN search results"
+```
+
+```r
 ses$takeScreenshot()
 ```
+
+![plot of chunk screenshot-2](inst/screenshot-2-1.png)
 
 ### JavaScript
 
@@ -115,13 +166,23 @@ converted to the corresponding DOM elements in the browser.
 The JavaScript function can return values to R. Returned HTML elements are
 automatically converted to `Element` objects.
 
-```{r}
+
+```r
 ses$executeScript("return 42 + 'foobar';")
 ```
 
-```{r}
+```
+## [1] "42foobar"
+```
+
+
+```r
 search2 <- ses$executeScript("return document.getElementById('cran-input');")
 search2$getName()
+```
+
+```
+## [1] "input"
 ```
 
 `Element` objects also have an `executeScript()` method, which works the

@@ -1,6 +1,6 @@
 Package: webdriver
 Title: 'WebDriver' Client for 'PhantomJS'
-Version: 1.0.5
+Version: 1.0.6
 Author: Ariya Hidayat, Gábor Csárdi, Gabor Torok, Ivan De Marino, Robert Gieseke,
     Steven Masala, Winston Chang, Zack Weinberg
 Maintainer: Gábor Csárdi <csardi.gabor@gmail.com>
@@ -13,12 +13,12 @@ LazyData: true
 URL: https://github.com/rstudio/webdriver
 BugReports: https://github.com/rstudio/webdriver/issues
 RoxygenNote: 6.0.1
-Imports: callr (>= 2.0.0), base64enc, curl (>= 2.0), debugme, httr,
+Imports: callr (>= 3.4.0), base64enc, curl (>= 2.0), debugme, httr,
         jsonlite, R6, showimage, utils, withr
 Suggests: covr, pingr, rprojroot, servr, testthat
 Encoding: UTF-8
 SystemRequirements: PhantomJS (http://phantomjs.org/)
 NeedsCompilation: no
-Packaged: 2018-04-10 23:12:55 UTC; gaborcsardi
+Packaged: 2021-01-12 18:40:09 UTC; winston
 Repository: CRAN
-Date/Publication: 2018-04-11 03:48:44 UTC
+Date/Publication: 2021-01-12 19:40:02 UTC
